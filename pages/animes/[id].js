@@ -25,9 +25,7 @@ const AnimeDetail = ({ anime: { anime } }) => {
             <div className="px-[12px] md:px-[40px] grid grid-cols-1 justify-items-center gap-[70px] md:grid-cols-[250px_1fr] md:gap-[18px]">
                 <div className='transition duration-200 min-w-[230px] w-[230px] h-[300px] block mt-[-98px] md:mt-[-60px] sm:hover:scale-105'>
                     <Image
-                        className='object-fill rounded-md h-full w-full'
-                        objectFit={true}
-                        layout='responsive'
+                        className='object-cover rounded-md h-full w-full'
                         src={anime?.images?.jpg?.large_image_url || anime?.image || '/android-chrome-512x512.png'}
                         alt={anime?.title || 'Anime'}
                         height={300}

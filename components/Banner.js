@@ -53,16 +53,13 @@ const Banner = ({ anime }) => {
                 // style={{ backgroundImage: `url(${anime.trailer.images.maximum_image_url})` }}
                 className={`my-4 bg-cover relative h-[300px] sm:h-[390px]`}>
                 <Image
-                    className='object-fill bg-black/80 bg-blend-color'
-                    objectFit={true}
-                    layout='fill'
+                    className='object-cover bg-black/80 bg-blend-color'
+                    fill
                     quality={100}
                     // placeholder='blur'
                     // blurDataURL='{bannerImage}'
                     alt={anime?.title || 'Anime'}
-                    src={bannerImage}
-                    height={390}
-                    width={1080} />
+                    src={bannerImage} />
 
                 <div className='absolute top-0 left-0 right-0 bottom-0 bg-black/60 h-[300px] sm:h-[390px]'>
                     <div className='flex flex-col sm:mx-10 sm:flex 

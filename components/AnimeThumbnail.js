@@ -23,8 +23,7 @@ const AnimeThumbnail = ({ anime }) => {
             <div className=' cursor-pointer transform hover:z-50 relative' >
                 {/* anime image */}
                 <Image
-                    className='object-fill rounded-md'
-                    layout='responsive'
+                    className='object-cover rounded-md'
                     quality={100}
                     src={anime?.images?.jpg?.large_image_url || anime?.image || '/android-chrome-512x512.png'}
                     alt={anime?.title || 'Anime'}

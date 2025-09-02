@@ -4,7 +4,7 @@ import ContentShimmer from 'react-content-shimmer'
 import Image from 'next/image'
 import noAnime from '../assets/images/no-data.svg'
 
-const AnimeList = ({ animes, loading }) => {
+const AnimeList = ({ animes = [], loading }) => {
     const responsive = [
         { breakpoint: 2000, cols: 6, rows: 3 },
         { breakpoint: 1200, cols: 5, rows: 2 },
@@ -54,17 +54,17 @@ const AnimeList = ({ animes, loading }) => {
                 gap={8}
                 loop
                 mobileBreakpoint={464} >
-                {animes.map((anime, index) => (
+                {Array.isArray(animes) && animes.map((anime, index) => (
                     <Carousel.Item
                         className='rounded-md overflow-visible'
                         swipeable={true}
                         draggable={true}
                         showDots={true}
-                        key={anime.mal_id + index * 3}
+                        key={`${anime?.id || anime?.mal_id || index}-list-${index}`}
                         ssr={true} // means to render carousel on server-side.
                         infinite={true}
                         responsive={responsive}>
-                        <AnimeThumbnail key={anime.mal_id} anime={anime} />
+                        <AnimeThumbnail key={`list-thumb-${anime?.id || anime?.mal_id || index}`} anime={anime} />
                     </Carousel.Item>
                 )
                 )}
@@ -82,8 +82,9 @@ const AnimeList = ({ animes, loading }) => {
                 <Image
                     className='object-cover rounded-md mt-4 w-[20%]'
                     alt={'No anime found'}
-                    layout='intrinsic'
                     src={noAnime}
+                    width={200}
+                    height={200}
                 />
             </div>
         )

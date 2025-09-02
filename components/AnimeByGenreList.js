@@ -8,18 +8,18 @@ const responsive = [
     // { breakpoint: 464, cols: 1 },
 ];
 
-const AnimeByGenresList = ({ data }) => {
+const AnimeByGenresList = ({ data = [] }) => {
     return (
         <div className='mx-2 mb-12'>
-            {data.map(({ animes, genre }, index) => (
-                <>
+            {Array.isArray(data) && data.map(({ animes = [], genre }, index) => (
+                <div key={`genre-${genre}-${index}`}>
                     {
-                        animes.length > 0 && <h3 className='mx-8 text-red-500 text-2xl sm:text-3xl font-bold mt-20 mb-8'>
+                        Array.isArray(animes) && animes.length > 0 && <h3 className='mx-8 text-red-500 text-2xl sm:text-3xl font-bold mt-20 mb-8'>
                             {genre}
                         </h3>
                     }
 
-                    {animes.length > 0 &&
+                    {Array.isArray(animes) && animes.length > 0 &&
                         <Carousel
                             key={index * 8}
                             className='overflow-visible'
@@ -28,9 +28,9 @@ const AnimeByGenresList = ({ data }) => {
                             gap={8}
                             loop
                             mobileBreakpoint={464}>
-                            {animes.map((anime, index) => (
+                            {Array.isArray(animes) && animes.map((anime, index) => (
                                 <Carousel.Item
-                                    key={anime.mal_id + index}
+                                    key={`${anime?.id || anime?.mal_id || index}-${index}`}
                                     className='rounded-md overflow-visible'
                                     swipeable={true}
                                     draggable={true}
@@ -39,7 +39,7 @@ const AnimeByGenresList = ({ data }) => {
                                     infinite={true}
                                     responsive={responsive}>
                                     <AnimeThumbnail
-                                        key={anime.mal_id}
+                                        key={`thumb-${anime?.id || anime?.mal_id || index}`}
                                         anime={anime} />
                                 </Carousel.Item>
                             )
@@ -47,7 +47,7 @@ const AnimeByGenresList = ({ data }) => {
                             }
                         </Carousel>
                     }
-                </>
+                </div>
             ))}
 
             {/*  <div className=''>
