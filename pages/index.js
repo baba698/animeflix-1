@@ -18,11 +18,12 @@ export async function getServerSideProps(context) {
   const animesData = await getAnimes()
   const randomAnimeData = await getRandomAnime();
 
-  const genreNames = genresData.data.map(genre => genre.name)
+  const genreNames = Array.isArray(genresData?.data) ? genresData.data.map(genre => genre.name) : [];
+  const animeList = Array.isArray(animesData?.data) ? animesData.data : [];
 
   //get all the anime whose genres name property are in the genreNames array in a new array of objects with a genre property and animes property
   const animesByGenre = genreNames.map(genre => {
-    const animes = animesData.data.filter(anime => anime.genres.some(animeGenre => animeGenre.name.toLowerCase().includes(genre.toLowerCase())))
+    const animes = animeList.filter(anime => Array.isArray(anime.genres) && anime.genres.some(animeGenre => animeGenre.name && animeGenre.name.toLowerCase().includes(genre.toLowerCase())))
     return { genre, animes }
   })
 
