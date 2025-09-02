@@ -16,11 +16,15 @@ AnimeFlix3 是一个基于 Next.js 的动漫信息聚合平台，前端采用 Re
 consumet API 文档参考：https://docs.consumet.org/
 
 常用 anime 相关接口举例：
-- `/anime/gogoanime/{query}`：搜索动漫
-- `/anime/gogoanime/info/{id}`：获取动漫详情
-- `/anime/gogoanime/watch/{episodeId}`：获取播放源
 
 如需自定义参数，建议参考 consumet 官方 API 文档。
+
+接口示例：
+- `/anime/{provider}/{query}` 搜索动漫（如 `/anime/animixplay/one piece`）
+- `/anime/{provider}/info/{id}` 获取动漫详情
+- `/anime/{provider}/watch/{episodeId}` 获取播放源
+
+推荐 provider：`gogoanime`、`zoro`、`animixplay` 等，具体以 consumet 官方文档为准。
 
 ## 4. 本地开发
 ```bash
