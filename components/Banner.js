@@ -10,12 +10,19 @@ const Banner = ({ anime }) => {
     })
  */
     const watchTrailer = () => {
-        console.log(anime.trailer.embed_url)
-        if (anime.trailer.embed_url)
-            window.open(anime.trailer.url, '_blank')
+        const trailerUrl = anime?.trailer?.url
+            || anime?.trailer?.embed_url
+            || (typeof anime?.trailer === 'string' && anime.trailer.length > 0
+                ? `https://www.youtube.com/watch?v=${anime.trailer}`
+                : null);
+
+        if (trailerUrl) window.open(trailerUrl, '_blank')
     }
 
-    let bannerImage = anime.trailer.images.maximum_image_url ? anime.trailer.images.maximum_image_url : anime.images.jpg.large_image_url
+    let bannerImage = anime?.trailer?.images?.maximum_image_url
+        || anime?.images?.jpg?.large_image_url
+        || anime?.image
+        || '/android-chrome-512x512.png'
     /* useEffect(async () => {
         setIsLoading(true);
         const tempAnime = await props?.data;

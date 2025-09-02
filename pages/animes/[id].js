@@ -1,32 +1,23 @@
-import { getAnimeCharacters, getSingleAnime, getSingleCharacter } from "../../network/requests"
+import { getSingleAnime } from "../../network/requests"
 import Image from 'next/image'
 import Banner from '../../components/Banner';
 import { AnimePropItem } from "../../components/utils";
 import { HeartIcon, StarIcon } from "@heroicons/react/solid";
-import { Character } from "../../components/Character";
 
-
-const keysToIgnore = [
-    'title', 'title_english', 'mal_id',
-    'title_japanese', 'popularity', 'url', 'synopsis',
-    'members', 'url', 'rating', 'rank'
-];
-
-const CharacterList = ({ characters }) => {
-    return (
-        <div>
-            <h2 className='text-2xl text-white mb-10'>Characters & voice actors</h2>
-            <div className='relative grid lg:grid-cols-2 gap-4 w-full h-full mb-20'>
-                {characters.map(character => (
-                    <Character key={character.mal_id} character={character} />
-                ))}
-            </div>
+// Episodes preview (first 10) for Consumet API
+const EpisodesPreview = ({ episodes = [] }) => (
+    <div className='p-2 mt-4 rounded-md bg-[#152232]/80'>
+        <h2 className='text-2xl text-white mb-4'>Episodes</h2>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+            {(episodes.slice(0, 10)).map((ep) => (
+                <div key={ep?.id || ep?.number} className='text-white opacity-90'>
+                    Episode {ep?.number ?? '-'}{ep?.title ? `: ${ep.title}` : ''}
+                </div>
+            ))}
         </div>
-
-    )
-}
-
-const AnimeDetail = ({ anime: { anime, characters } }) => {
+    </div>
+)
+const AnimeDetail = ({ anime: { anime } }) => {
     return (
         <div>
             <Banner anime={anime} />
@@ -37,25 +28,25 @@ const AnimeDetail = ({ anime: { anime, characters } }) => {
                         className='object-fill rounded-md h-full w-full'
                         objectFit={true}
                         layout='responsive'
-                        src={anime.images.jpg.large_image_url}
-                        alt={anime.title}
+                        src={anime?.images?.jpg?.large_image_url || anime?.image || '/android-chrome-512x512.png'}
+                        alt={anime?.title || 'Anime'}
                         height={300}
                         width={230} />
                 </div>
 
                 <div className='grid auto-rows-min text-white py-4 px-6'>
                     <span className='opacity-80 text-xl'>
-                        Rank #{anime?.rank ?? 'N/A'}
+                        Released {anime?.releaseDate ?? 'N/A'}
                     </span>
                     <p className="italic text-sm text-white opacity-80">
-                        {anime.rating ?? "N/A"}
+                        {anime?.status ?? "N/A"}
                     </p>
                     <h1 className='my-4 text-3xl md:text-4xl'>
-                        {anime.title ?? "N/A"}
+                        {anime?.title ?? "N/A"}
                     </h1>
                     <span>Sypnosis</span>
                     <p className="text-white opacity-80 md:text-xl text-base">
-                        {anime.synopsis ?? "N/A"}
+                        {anime?.description ?? anime?.synopsis ?? "N/A"}
                     </p>
                 </div>
             </div>
@@ -64,12 +55,12 @@ const AnimeDetail = ({ anime: { anime, characters } }) => {
                 <aside>
                     <div className='space-y-4'>
                         <div className='p-2 rounded-md bg-[#152232]/80'>
-                            <AnimePropItem label='Rank' text={anime.score} >
+                            <AnimePropItem label='Episodes' text={anime?.totalEpisodes ?? '-'} >
                                 <StarIcon className='text-yellow-500 w-5' />
                             </AnimePropItem>
                         </div>
                         <div className='p-2 rounded-md bg-[#152232]/80'>
-                            <AnimePropItem label='Rating' text={anime.popularity}>
+                            <AnimePropItem label='Type' text={anime?.type ?? '-'} >
                                 <HeartIcon className='text-red-500 w-5' />
                             </AnimePropItem>
                         </div>
@@ -77,18 +68,14 @@ const AnimeDetail = ({ anime: { anime, characters } }) => {
 
                     <div className='p-2 mt-4 rounded-md bg-[#152232]/80'>
                         {
-                            Object.keys(anime).map((key, index) => {
-                                if (anime[key] && (typeof anime[key] === 'string' || typeof anime[key] === 'number')
-                                    && !keysToIgnore.includes(key)) {
-                                    return <AnimePropItem key={index} label={key} text={anime[key]} />
-                                }
-                            })
-                            //loop over the anime props which are string and display them using the AnimePropItem component
+                            Array.isArray(anime?.genres) && anime.genres.length > 0 && (
+                                <AnimePropItem label='Genres' text={anime.genres.join(', ')} />
+                            )
                         }
                     </div>
                 </aside>
 
-                {<CharacterList characters={characters} />}
+                <EpisodesPreview episodes={anime?.episodes || []} />
             </div>
         </div>
     )
@@ -101,14 +88,10 @@ export async function getServerSideProps(context) {
     const { id } = context.query;
     const animeRes = await getSingleAnime(id)
 
-    //get anime character data
-    const characters = await getAnimeCharacters(id)
-
     return {
         props: {
             anime: {
-                anime: animeRes?.data ?? {},
-                characters: characters?.data?.length > 10 ? characters.data.slice(0, 10) : characters.data
+                anime: animeRes?.data ?? {}
             }
         }
     }

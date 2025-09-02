@@ -7,14 +7,18 @@ import { AnimeProp } from './utils';
 
 const AnimeThumbnail = ({ anime }) => {
     const router = useRouter();
-    const watchTrailer = () => {
-        console.log(anime.trailer.embed_url)
-        if (anime.trailer.embed_url)
-            window.open(anime.trailer.url, '_blank')
+    const watchTrailer = (e) => {
+        e?.stopPropagation?.();
+        const trailerUrl = anime?.trailer?.url
+            || anime?.trailer?.embed_url
+            || (typeof anime?.trailer === 'string' && anime.trailer.length > 0
+                ? `https://www.youtube.com/watch?v=${anime.trailer}`
+                : null);
+        if (trailerUrl) window.open(trailerUrl, '_blank');
     }
 
     return (
-        <div onClick={() => { router.replace(`/animes/${anime.mal_id}`) }}
+        <div onClick={() => { const id = anime?.id || anime?.mal_id || anime?.slug; if (id) router.replace(`/animes/${id}`) }}
             className='group transform transition duration-200 ease-in-out w-[302px] sm:hover:scale-90'>
             <div className=' cursor-pointer transform hover:z-50 relative' >
                 {/* anime image */}
@@ -22,8 +26,8 @@ const AnimeThumbnail = ({ anime }) => {
                     className='object-fill rounded-md'
                     layout='responsive'
                     quality={100}
-                    src={anime.images.jpg.large_image_url}
-                    alt={anime.title}
+                    src={anime?.images?.jpg?.large_image_url || anime?.image || '/android-chrome-512x512.png'}
+                    alt={anime?.title || 'Anime'}
                     height={1020}
                     width={1080} />
 
@@ -32,7 +36,7 @@ const AnimeThumbnail = ({ anime }) => {
                     <div className='flex justify-between mt-3 ml-3 mr-3'>
                         {/* anime year */}
                         <div className='text-black text-sm text-center
-                     font-bold p-2  rounded-sm bg-slate-200/60 w-14'>{anime.year || '-'}</div>
+                     font-bold p-2  rounded-sm bg-slate-200/60 w-14'>{anime?.year || anime?.releaseDate || '-'}</div>
 
                         <PlayIcon className='w-14 h-8' onClick={watchTrailer} />
                     </div>
@@ -44,14 +48,14 @@ const AnimeThumbnail = ({ anime }) => {
             <div className='mt-3'>
                 <h3 className='text-white truncate duration-100 ease-in-out 
                 sm:group-hover:text-red-500 text-xl font-bold'>
-                    {anime.title}
+                    {anime?.title || 'Untitled'}
                 </h3>
 
                 <div className='flex justify-start space-x-4 mt-2'>
-                    <AnimeProp text={anime.type.toUpperCase()} >
+                    <AnimeProp text={(anime?.type || '').toString().toUpperCase() || '-'} >
                         <PlayIcon className='text-white w-5' />
                     </AnimeProp>
-                    <AnimeProp text={anime.score} >
+                    <AnimeProp text={anime?.score ?? '-'} >
                         <ThumbUpIcon className='text-white w-5' />
                     </AnimeProp>
                 </div>
